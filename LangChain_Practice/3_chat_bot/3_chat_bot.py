@@ -16,20 +16,28 @@ def get_model(llm_name:str,model_name: str, api_key: str):
 import os
 
 llm_name = os.getenv("LLM_NAME")
-print(llm_name)
 api_key = os.getenv(str(llm_name)+"_API_KEY")
-print(api_key)
 model_name = os.getenv(str(llm_name)+"_MODEL_NAME")
-print(model_name)
 
 llm= get_model(llm_name,model_name,api_key);
 
-messages = [
-    SystemMessage("You are an expert in social media content strategy, and you always respond in a very energetic, brief, and bulleted list."),
-    AIMessage("Here's a quick tip! * Use a trending audio track."),
-    HumanMessage("Give a short tip to create engaging post on Instagram")
-]
+chats = [] #Chat conversation history
 
-result = llm.invoke(messages)
 
-print(result.content)
+chats.append(SystemMessage(content="You are an AI Assistant"))
+
+while True:
+    user_query= input("You:>")
+    if user_query.lower() == "exit":
+        break;
+    chats.append(HumanMessage(content=user_query))
+
+    result= llm.invoke(chats)
+    response = result.content
+    chats.append(AIMessage(content=response))
+
+    print(f"AI :> {response}")
+
+print("--- Message History ---")
+print(chats)
+
